@@ -4,6 +4,7 @@ cd "$(dirname "$0")/.." || exit 1
 # 等英語版配圖批次結束（不搶 codex）
 while [ ! -f "$HOME/projects/daily-english-365/scratch/img-done" ]; do sleep 120; done
 LANES=${LANES:-4}
+scripts/gen-bg.sh > scratch/bg.log 2>&1
 : > scratch/img-fail.txt
 node -e "for(const x of require('./data/scenes.json'))console.log(String(x.id).padStart(3,'0')+'\t'+x.image_prompt_en)" > scratch/img-list.tsv
 run_lane() {
