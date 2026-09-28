@@ -39,9 +39,10 @@ function render() {
   x.lines.forEach((l, k) => {
     const li = document.createElement('li');
     li.className = 'line hide-ja hide-kana hide-zh'; li.dataset.k = k + 1;
+    const role = (x.roles && x.roles[l.speaker]) || l.speaker;
     li.innerHTML = `<button class="play" aria-label="播放第 ${k + 1} 句">▶</button>
-      <div><span class="spk">${l.speaker}</span><span class="ja" lang="ja"></span><span class="kana" lang="ja"></span><span class="zh"></span></div>`;
-    $('.ja', li).textContent = l.ja; $('.kana', li).textContent = l.kana; $('.zh', li).textContent = l.zh;
+      <div><span class="spk spk-${l.speaker}"></span><span class="ja" lang="ja"></span><span class="kana" lang="ja"></span><span class="zh"></span></div>`;
+    $('.spk', li).textContent = role; $('.ja', li).textContent = l.ja; $('.kana', li).textContent = l.kana; $('.zh', li).textContent = l.zh;
     $('.play', li).onclick = () => { stopAll(); playLine(k + 1); };
     $('.ja', li).onclick = () => li.classList.remove('hide-ja');
     $('.kana', li).onclick = () => li.classList.remove('hide-kana');
@@ -117,7 +118,9 @@ $('#showZh').onclick = () => reveal('hide-ja', 'hide-kana', 'hide-zh');
 $('#rate').onclick = e => { state.rate = state.rate === 1 ? 0.75 : 1; e.currentTarget.textContent = state.rate === 1 ? '1×' : '0.75× 慢速'; e.currentTarget.setAttribute('aria-pressed', state.rate !== 1); };
 $('#prev').onclick = () => go(state.id - 1);
 $('#next').onclick = () => go(state.id + 1);
-$('#doneBtn').onclick = () => { const done = loadDone(); const key = taipeiDateKey(); if (!done.includes(key)) { done.push(key); saveDone(done); } renderDone(); };
+$('#doneBtn').onclick = () => { const done = loadDone(); const key = taipeiDateKey(); if (!done.includes(key)) { done.push(key); saveDone(done); }
+  try { const ids = new Set(JSON.parse(localStorage.getItem('dj365.doneDays') || '[]')); ids.add(state.id); localStorage.setItem('dj365.doneDays', JSON.stringify([...ids])); } catch {}
+  renderDone(); };
 window.addEventListener('popstate', () => { state.id = parseDay(location.search) ?? todayIndex(); stopAll(); render(); });
 
 main().catch(e => { $('#titleZh').textContent = '載入失敗，請重新整理'; console.error(e); });

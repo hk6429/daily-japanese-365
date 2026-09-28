@@ -13,6 +13,7 @@
     <nav><a href="./">回今天</a></nav>
   </header>
   <p class="hint">365 個情境依主題分組，點任一張卡片即可練習。</p>
+  <div class="filter"><input id="q" type="search" placeholder="搜尋標題／主題（中文或日文）" aria-label="搜尋情境"><label><input id="onlyTodo" type="checkbox"> 只看未完成</label></div>
   <div id="groups"></div>
 </div>
 <script type="module">
@@ -21,6 +22,7 @@ import { bgFor, setPageBg } from './js/cats.js';
 setPageBg('bg/generic.webp');
 const scenes = await (await fetch('data/scenes.json')).json();
 const today = todayIndex();
+let doneDays = new Set(); try { doneDays = new Set(JSON.parse(localStorage.getItem('dj365.doneDays') || '[]')); } catch {}
 const groups = new Map();
 for (const x of scenes) { if (!groups.has(x.category)) groups.set(x.category, []); groups.get(x.category).push(x); }
 const root = document.getElementById('groups');
@@ -31,7 +33,8 @@ for (const [cat, list] of groups) {
   const grid = g.querySelector('.grid');
   for (const x of list) {
     const a = document.createElement('a'); a.href = `./?d=${x.id}`;
-    a.className = x.id === today ? 'today' : '';
+    a.className = (x.id === today ? 'today' : '') + (doneDays.has(x.id) ? ' is-done' : '');
+    a.dataset.q = `${x.title_zh} ${x.title_ja} ${x.category}`.toLowerCase(); a.dataset.done = doneDays.has(x.id) ? '1' : '0';
     const id3 = String(x.id).padStart(3, '0');
     a.innerHTML = `<span class="thumb"><img loading="lazy" alt="" src="img/${id3}.webp" onerror="this.parentNode.classList.add('missing');this.remove()"></span><span class="txt"><small>第 ${x.id} 天</small><b></b><i></i></span>`;
     a.querySelector('b').textContent = x.title_zh; a.querySelector('i').textContent = x.title_ja;
@@ -39,6 +42,13 @@ for (const [cat, list] of groups) {
   }
   root.appendChild(g);
 }
+const q = document.getElementById('q'), onlyTodo = document.getElementById('onlyTodo');
+function applyFilter() {
+  const s = q.value.trim().toLowerCase();
+  document.querySelectorAll('.grid a').forEach(a => { a.style.display = ((!s || a.dataset.q.includes(s)) && !(onlyTodo.checked && a.dataset.done === '1')) ? '' : 'none'; });
+  document.querySelectorAll('.group').forEach(g => { g.style.display = [...g.querySelectorAll('.grid a')].some(a => a.style.display !== 'none') ? '' : 'none'; });
+}
+q.oninput = applyFilter; onlyTodo.onchange = applyFilter;
 </script>
 <script src="js/vendor/gc-config.js"></script>
 <script async src="js/vendor/count.js"></script>
