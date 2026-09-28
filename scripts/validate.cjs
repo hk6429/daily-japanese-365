@@ -1,0 +1,12 @@
+const s = JSON.parse(require('fs').readFileSync('data/scenes.json','utf8'));
+const errs=[]; if(s.length!==365) errs.push(`count ${s.length}`);
+const titles=new Set(); const KANA=/^[぀-ゟ゠-ヿー　-〿！-～\s]+$/;
+s.forEach((x,i)=>{ if(x.id!==i+1) errs.push(`id ${x.id} at ${i}`);
+ if(!x.category||!x.title_ja||!x.title_zh||!x.scene_zh||!x.image_prompt_en) errs.push(`fields ${x.id}`);
+ const t=(x.title_ja||''); if(titles.has(t)) errs.push(`dup title ${t}`); titles.add(t);
+ if(!Array.isArray(x.lines)||x.lines.length!==5) errs.push(`lines ${x.id}`);
+ (x.lines||[]).forEach((l,k)=>{ if(l.speaker!==(k%2?'B':'A')) errs.push(`spk ${x.id}-${k+1}`);
+  const n=[...(l.ja||'')].length; if(n<4||n>35) errs.push(`len ${x.id}-${k+1}: ${l.ja}`);
+  if(!KANA.test(l.kana||'')) errs.push(`kana ${x.id}-${k+1}: ${l.kana}`);
+  if(!l.zh) errs.push(`zh ${x.id}-${k+1}`); });});
+if(errs.length){console.error(errs.join('\n'));process.exit(1)} console.log('ok 365');
