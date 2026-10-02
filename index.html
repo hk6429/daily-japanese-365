@@ -24,7 +24,7 @@
     <span class="nav"><button id="prev" aria-label="前一天">‹</button> <button id="next" aria-label="後一天">›</button></span>
   </div>
   <article class="card">
-    <div class="hero" id="hero"><img id="heroImg" alt=""></div>
+    <div class="hero" id="hero"><img id="heroImg" alt=""><span id="stamp" class="stamp" aria-hidden="true">完成</span><span id="stampSay" class="stamp say" aria-hidden="true">說</span></div>
     <div class="title">
       <span class="cat" id="cat"></span>
       <h2 id="titleZh">載入中…</h2>
@@ -39,9 +39,14 @@
       <button id="showZh">看中譯</button>
     </div>
     <ol class="lines" id="lines"></ol>
-    <div class="done"><span id="stats"></span><button id="doneBtn">完成今日</button></div>
+    <div class="quiz-bar mission-bar"><button id="missionBtn" type="button" aria-expanded="false">今日口說任務（四關）</button></div>
+    <section id="mission" class="mission" hidden aria-label="今日口說任務"></section>
+    <div class="done"><span id="stats"></span><button id="doneBtn" type="button">完成這一課</button></div>
+    <p id="missed" class="hint-inline missed" hidden></p>
+    <div id="badges" class="badges" hidden></div>
+    <div class="quiz-bar share-bar"><button id="shareBtn" type="button" hidden>分享今日成果卡</button></div>
   </article>
-  <p class="hint">怎麼練：先按「聽全部」只用耳朵聽 2–3 次 → 點單句可重播 → 聽不出來再按「看日文」，漢字不會讀再按「看假名」→ 最後看中譯確認。點任一句文字也能單獨揭曉。</p>
+  <p class="hint">怎麼練：先按「聽全部」只用耳朵聽 2–3 次 → 點單句可重播 → 聽不出來再按「看日文」，漢字不會讀再按「看假名」→ 最後看中譯確認。點任一句文字也能單獨揭曉。想練口說就挑戰「今日口說任務」四關：從看字跟念一路練到不看字背出來。</p>
   <p class="hint">小提醒：假名依正字法標示，助詞「は」唸 wa、「へ」唸 e、「を」唸 o；假名間的空格是文節分隔，實際書寫不空格。</p>
   <footer>日語日日聽 · 大乃老師 · 插畫由 AI 生成 · 語音為合成人聲</footer>
 </div>
